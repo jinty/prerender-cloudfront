@@ -55,6 +55,7 @@ Resources:
                   if (/baiduspider|Facebot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/.test(user_agent[0].value)) {
                     headers['x-prerender-token'] = [{ key: 'X-Prerender-Token', value: '${PrerenderToken}'}];
                     headers['x-prerender-host'] = [{ key: 'X-Prerender-Host', value: host[0].value}];
+                    headers['x-prerender-cachebuster'] = [{ key: 'X-Prerender-Cachebuster', value: Date.now().toString()}];
                   }
                 }
                 callback(null, request);
@@ -109,6 +110,10 @@ Resources:
       DistributionConfig:
         DefaultCacheBehavior:
           Compress: true
+          # NOTE: we let cloudfront cache heavily the resurces of the SPA. Your deploy
+          #       step will need to include an invalidation of the cloudfromt cache.
+          #       The requests to prerender.io are NOT cached thanks to the X-Prerender-Cachebuster
+          #       header.
           MinTTL: 31536000
           DefaultTTL: 31536000
           ForwardedValues:
@@ -116,6 +121,7 @@ Resources:
             Headers:
               - "X-Prerender-Token"
               - "X-Prerender-Host"
+              - "X-Prerender-Cachebuster"
           TargetOriginId: origin
           ViewerProtocolPolicy : allow-all
           LambdaFunctionAssociations:

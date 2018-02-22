@@ -34,3 +34,18 @@ requests entering the system, it sets a header which Cloudfront uses to
 partition the cache. The second function, run after the cache, detects
 the presence of the header and, if present, routes the request to
 Prerender.io
+
+Caching
+--
+
+By default, static resources from the bucket are cached for a long time
+period. This improves performance but means that the deploy process of
+any real app will need a Cloudfront purge step.
+
+As prerender.io does NOT want any Cloudfront caching (see
+https://github.com/prerender/prerender/issues/93#issuecomment-366774910)
+we disable that by including a X-Prerender-Cachebuster header which
+effectively disables cloudfront caching.
+
+NOTE: using X-Prerender-Cachebuster is probably not optimal, if you find
+a better way, please let me know.
