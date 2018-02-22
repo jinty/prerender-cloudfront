@@ -1,9 +1,14 @@
 Parameters:
   PrerenderToken:
     Type: String
-  OriginDomain:
-    Type: String
 Resources:
+  WebBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        ErrorDocument: index.html
+        IndexDocument: index.html
   LambdaEdgeExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -119,10 +124,14 @@ Resources:
             - EventType: origin-request
               LambdaFunctionARN: !Join [ ":", [ !GetAtt [RedirectToPrerender, Arn], !GetAtt [RedirectToPrerenderVersion1, Version] ] ]
         Enabled: true
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
         HttpVersion: http2
         Origins:
           - CustomOriginConfig:
-              OriginProtocolPolicy: https-only
-            DomainName: !Ref OriginDomain
+              OriginProtocolPolicy: http-only
+            DomainName: !Select [2, !Split [ '/', !GetAtt [WebBucket, WebsiteURL]]]
             Id: origin
         PriceClass: PriceClass_100
