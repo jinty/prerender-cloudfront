@@ -52,7 +52,9 @@ Resources:
                 const user_agent = headers['user-agent'];
                 const host = headers['host'];
                 if (user_agent && host) {
-                  if (/baiduspider|Facebot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/.test(user_agent[0].value)) {
+                  var prerender = /baiduspider|Facebot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/.test(user_agent[0].value)
+                  prerender = prerender | /_escaped_fragment_/.test(request.querystring)
+                  if (prerender) {
                     headers['x-prerender-token'] = [{ key: 'X-Prerender-Token', value: '${PrerenderToken}'}];
                     headers['x-prerender-host'] = [{ key: 'X-Prerender-Host', value: host[0].value}];
                     headers['x-prerender-cachebuster'] = [{ key: 'X-Prerender-Cachebuster', value: Date.now().toString()}];
@@ -61,7 +63,7 @@ Resources:
                 callback(null, request);
             };
       Runtime: "nodejs6.10"
-  SetPrerenderHeaderVersion2:
+  SetPrerenderHeaderVersion1:
     Type: "AWS::Lambda::Version"
     Properties:
       FunctionName:
@@ -126,7 +128,7 @@ Resources:
           ViewerProtocolPolicy : allow-all
           LambdaFunctionAssociations:
             - EventType: viewer-request
-              LambdaFunctionARN: !Join [ ":", [ !GetAtt [SetPrerenderHeader, Arn], !GetAtt [SetPrerenderHeaderVersion2, Version] ] ]
+              LambdaFunctionARN: !Join [ ":", [ !GetAtt [SetPrerenderHeader, Arn], !GetAtt [SetPrerenderHeaderVersion1, Version] ] ]
             - EventType: origin-request
               LambdaFunctionARN: !Join [ ":", [ !GetAtt [RedirectToPrerender, Arn], !GetAtt [RedirectToPrerenderVersion1, Version] ] ]
         Enabled: true
