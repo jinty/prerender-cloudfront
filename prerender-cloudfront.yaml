@@ -52,8 +52,9 @@ Resources:
                 const user_agent = headers['user-agent'];
                 const host = headers['host'];
                 if (user_agent && host) {
-                  var prerender = /baiduspider|Facebot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/.test(user_agent[0].value)
-                  prerender = prerender | /_escaped_fragment_/.test(request.querystring)
+                  var prerender = /baiduspider|Facebot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/i.test(user_agent[0].value);
+                  prerender = prerender || /_escaped_fragment_/.test(request.querystring);
+                  prerender = prerender && ! /\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|doc|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)$/i.test(request.uri);
                   if (prerender) {
                     headers['x-prerender-token'] = [{ key: 'X-Prerender-Token', value: '${PrerenderToken}'}];
                     headers['x-prerender-host'] = [{ key: 'X-Prerender-Host', value: host[0].value}];
@@ -63,7 +64,7 @@ Resources:
                 callback(null, request);
             };
       Runtime: "nodejs6.10"
-  SetPrerenderHeaderVersion1:
+  SetPrerenderHeaderVersion3:
     Type: "AWS::Lambda::Version"
     Properties:
       FunctionName:
@@ -128,7 +129,7 @@ Resources:
           ViewerProtocolPolicy : allow-all
           LambdaFunctionAssociations:
             - EventType: viewer-request
-              LambdaFunctionARN: !Join [ ":", [ !GetAtt [SetPrerenderHeader, Arn], !GetAtt [SetPrerenderHeaderVersion1, Version] ] ]
+              LambdaFunctionARN: !Join [ ":", [ !GetAtt [SetPrerenderHeader, Arn], !GetAtt [SetPrerenderHeaderVersion3, Version] ] ]
             - EventType: origin-request
               LambdaFunctionARN: !Join [ ":", [ !GetAtt [RedirectToPrerender, Arn], !GetAtt [RedirectToPrerenderVersion1, Version] ] ]
         Enabled: true

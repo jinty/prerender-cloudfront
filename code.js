@@ -10,7 +10,8 @@
     for (let s of paths) {
         content = content + '<li><a href="' + s + '">' + s + '</a></li>\n';
     }
-    content = content + '</ul>';
+    content = content + '</ul>\n';
+    content = content + '<img src="/testimage.png">';
     document.getElementById('content').innerHTML = content;
     document.getElementById('header').innerHTML = 'Simplest SPA ever';
 })();
