@@ -63,7 +63,7 @@ Resources:
                 }
                 callback(null, request);
             };
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
   SetPrerenderHeaderVersion3:
     Type: "AWS::Lambda::Version"
     Properties:
@@ -100,7 +100,7 @@ Resources:
               }
               callback(null, request);
           };
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
   RedirectToPrerenderVersion1:
     Type: "AWS::Lambda::Version"
     Properties:
