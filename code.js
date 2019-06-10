@@ -1,10 +1,10 @@
-(function () {
+  (function () {
     var current = window.location.pathname;
     var paths = ['/', '/index.html', '/somewhere', '/anywhere', '/over/here', '/over/there'];
     if (paths.indexOf(current) === -1) {
         content = '<p>404 Not Found</p>';
     } else {
-            content = '<p>Welcome to the ' + current + ' page.<p>\n';
+        content = '<p>Welcome to the ' + current + ' page.<p>\n';
     }
     content = content + '<ul>\n';
     for (let s of paths) {
