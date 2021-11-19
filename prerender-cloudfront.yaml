@@ -59,6 +59,7 @@ Resources:
                     headers['x-prerender-token'] = [{ key: 'X-Prerender-Token', value: '${PrerenderToken}'}];
                     headers['x-prerender-host'] = [{ key: 'X-Prerender-Host', value: host[0].value}];
                     headers['x-prerender-cachebuster'] = [{ key: 'X-Prerender-Cachebuster', value: Date.now().toString()}];
+                    headers['x-query-string'] = [{ key: 'X-Query-String', value: request.querystring}];
                   }
                 }
                 callback(null, request);
@@ -84,6 +85,7 @@ Resources:
           /* change the version number below whenever this code is modified */
           exports.handler = (event, context, callback) => {
                const request = event.Records[0].cf.request;
+               request.querystring = request.headers['x-query-string'][0].value;
                if (request.headers['x-prerender-token'] && request.headers['x-prerender-host']) {
                  request.origin = {
                      custom: {
@@ -125,6 +127,7 @@ Resources:
               - "X-Prerender-Token"
               - "X-Prerender-Host"
               - "X-Prerender-Cachebuster"
+              - "X-Query-String"
           TargetOriginId: origin
           ViewerProtocolPolicy : allow-all
           LambdaFunctionAssociations:
