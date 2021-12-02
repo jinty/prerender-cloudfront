@@ -64,7 +64,7 @@ Resources:
                 }
                 callback(null, request);
             };
-      Runtime: "nodejs10.x"
+      Runtime: "nodejs14.x"
   SetPrerenderHeaderVersion3:
     Type: "AWS::Lambda::Version"
     Properties:
@@ -85,8 +85,8 @@ Resources:
           /* change the version number below whenever this code is modified */
           exports.handler = (event, context, callback) => {
                const request = event.Records[0].cf.request;
-               request.querystring = request.headers['x-query-string'][0].value;
-               if (request.headers['x-prerender-token'] && request.headers['x-prerender-host']) {
+               if (request.headers['x-prerender-token'] && request.headers['x-prerender-host'] && request.headers['x-query-string']) {
+                 request.querystring = request.headers['x-query-string'][0].value;
                  request.origin = {
                      custom: {
                          domainName: 'service.prerender.io',
@@ -102,7 +102,7 @@ Resources:
               }
               callback(null, request);
           };
-      Runtime: "nodejs10.x"
+      Runtime: "nodejs14.x"
   RedirectToPrerenderVersion1:
     Type: "AWS::Lambda::Version"
     Properties:
